@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 
 import { useForm } from "../utils/hooks";
+import { FETCH_POSTS_QUERY } from "../utils/graphql";
 // import { FETCH_POSTS_QUERY } from '../util/graphql';
 
 function PostForm() {
@@ -11,10 +12,18 @@ function PostForm() {
     body: "",
   });
 
-  const [createPost] = useMutation(CREATE_POST_MUTATION, {
+  const [createPost, { error }] = useMutation(CREATE_POST_MUTATION, {
     variables: values,
+    // we are fetching from our local graphql cache using gql query
     update(proxy, result) {
-      console.log(result);
+      // cacheData contains all cache data
+      const cacheData = proxy.readQuery({
+        query: FETCH_POSTS_QUERY,
+      });
+      cacheData.getPosts = [result.data.createPost, ...cacheData.getPosts];
+      // to persist this
+      proxy.writeQuery({ query: FETCH_POSTS_QUERY, data: cacheData });
+      values.body = "";
     },
   });
 
