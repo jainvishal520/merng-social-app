@@ -33,7 +33,7 @@ const FETCH_POSTS_QUERY = gql`
     getPosts {
       id
       body
-      createdAt
+      # createdAt
       comments {
         id
         body
