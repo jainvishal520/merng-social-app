@@ -1,19 +1,19 @@
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, Form } from "semantic-ui-react";
 import { useForm } from "../utils/hooks";
-
+import { AuthContext } from "../context/AuthContext";
 const Login = (props) => {
   const initLoginState = { username: "", password: "" };
-
+  const { login: contextLogin } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
   const { onChange, values, onSubmit } = useForm(loginUser, initLoginState);
 
-  const [login, { loading }] = useMutation(LOGIN_USER, {
+  const [loginCb, { loading }] = useMutation(LOGIN_USER, {
     update(_, result) {
-      console.log("---");
-      console.log(result);
+      // this will run after success from api
+      contextLogin(result.data.login);
       props.history.push("/");
     },
     onError(err) {
@@ -23,7 +23,7 @@ const Login = (props) => {
     variables: values,
   });
   function loginUser() {
-    login();
+    loginCb();
   }
   return (
     <div className="form-container">

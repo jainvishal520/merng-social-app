@@ -16,6 +16,7 @@ const Home = () => {
         {loading ? (
           <h1>loading posts ...</h1>
         ) : (
+          data &&
           data.getPosts &&
           data.getPosts.map((post) => (
             <Grid.Column key={post.id}>
