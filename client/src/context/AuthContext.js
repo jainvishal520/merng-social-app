@@ -1,14 +1,18 @@
 import React, { createContext, useReducer } from "react";
 import { authReducer } from "../reducer/authReducer";
-
 export const AuthContext = createContext();
 
 const AuthContextProvider = (props) => {
-  const [auth, dispatch] = useReducer(authReducer, { user: null });
+  const [auth, dispatch] = useReducer(authReducer, {}, () => {
+    const user = localStorage.getItem("user");
+    return user ? { user: JSON.parse(user) } : { user: null };
+  });
   const login = (userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
     dispatch({ type: "LOGIN", payload: userData });
   };
   const logout = () => {
+    localStorage.removeItem("user");
     dispatch({ type: "LOGOUT" });
   };
   return (
